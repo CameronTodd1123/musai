@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MUS AI LTD</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #000;
+      color: #f5f5f5;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Shared section layout */
+    .section {
+      min-height: 100vh;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #111 0, #000 55%, #000 100%);
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .section:nth-of-type(2) {
+      background: radial-gradient(circle at center, #050505 0, #000 60%, #000 100%);
+    }
+
+    .section:nth-of-type(3) {
+      background: radial-gradient(circle at bottom, #141414 0, #000 60%, #000 100%);
+    }
+
+    .section:nth-of-type(5) {
+      background: radial-gradient(circle at center, #0a0a1a 0, #000 60%, #000 100%);
+    }
+
+    /* Galaga Game Styles */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .game-title {
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #ffeb3b;
+      text-align: center;
+      text-shadow: 0 0 10px #ffeb3b;
+      margin-bottom: 10px;
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 800px;
+      color: #3af5ff;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    #gameCanvas {
+      border: 2px solid #3af5ff;
+      border-radius: 8px;
+      background: #000;
+      box-shadow: 0 0 20px rgba(58, 245, 255, 0.5);
+      cursor: none;
+    }
+
+    .game-controls {
+      text-align: center;
+      color: #9e9e9e;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+
+    .game-controls p {
+      margin: 5px 0;
+    }
+
+    /* Full width hero section */
+    .hero-section {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    .hero-image,
+    .hero-video {
+      width: 100%;
+      height: 100vh;
+      min-height: 100vh;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      display: block;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 40px;
+      background: transparent;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 90%;
+    }
+
+    .hero-text {
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #fff;
+      margin: 0;
+      line-height: 1.3;
+      font-family: 'Courier New', monospace;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 2.5rem;
+      background-color: #fff;
+      margin-left: 4px;
+      animation: blink 1s infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      width: 0;
+      height: 0;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-top: 40px solid #000;
+      opacity: 0.6;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+      }
+      40% {
+        transform: translateX(-50%) translateY(-10px);
+      }
+      60% {
+        transform: translateX(-50%) translateY(-5px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-text {
+        font-size: 1.5rem;
+        letter-spacing: 0.1em;
+      }
+
+      .hero-content {
+        padding: 24px;
+      }
+
+      .typing-cursor {
+        height: 1.5rem;
+      }
+    }
+
+    /* Site frame */
+    .frame {
+      width: 100%;
+      max-width: 960px;
+      border: 4px solid #3af5ff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 0 18px rgba(58, 245, 255, 0.4);
+      transform: translateZ(0);
+      will-change: auto;
+    }
+
+    /* Header (in first section) */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-size: 2.2rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: #ffeb3b;
+      text-shadow:
+        0 0 4px #ffeb3b,
+        0 0 12px #ffeb3b;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9e9e9e;
+    }
+
+    /* The neon content boxes in each section */
+    .content-box {
+      border: 1px solid #3af5ff;
+      border-radius: 8px;
+      padding: 18px 20px 20px;
+      background: rgba(10, 10, 10, 0.9);
+    }
+
+    .content-box h2 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 10px;
+      color: #3af5ff;
+    }
+
+    .content-box p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e0e0e0;
+    }
+
+    /* Two column grid layout (2x3) */
+    .columns-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .column h3 {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 12px;
+      color: #3af5ff;
+    }
+
+    .column p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e0e0e0;
+      margin-bottom: 8px;
+    }
+
+    /* Logo section */
+    .logos-section {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(58, 245, 255, 0.3);
+      text-align: center;
+    }
+
+    .logos-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9e9e9e;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .logos-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
+      /* background: #4a4a4a; */
+      padding: 24px;
+      border-radius: 8px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .logo-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .logo-item:hover {
+      opacity: 1;
+    }
+
+    .logo-item img {
+      max-height: 50px;
+      max-width: 150px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      filter: none;
+      display: block;
+      transform: translateZ(0);
+    }
+
+    .logo-item.eu-commission img {
+      max-height: 70px;
+      max-width: 220px;
+    }
+
+    .logo-item .logo-placeholder {
+      font-size: 0.9rem;
+      color: #9e9e9e;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      border: 1px dashed rgba(58, 245, 255, 0.3);
+      border-radius: 4px;
+      display: none;
+    }
+
+    .logo-item img:not([src]),
+    .logo-item img[src=""] {
+      display: none;
+    }
+
+    .logo-item img:not([src]) ~ .logo-placeholder,
+    .logo-item img[src=""] ~ .logo-placeholder {
+      display: block;
+    }
+
+    ul {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      color: #f5f5f5;
+    }
+
+    li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #ffeb3b;
+    }
+
+    a {
+      color: #ffeb3b;
+      text-decoration: none;
+      border-bottom: 1px dotted #ffeb3b;
+    }
+
+    a:hover {
+      border-bottom-style: solid;
+    }
+
+    /* Contact list with bullet points */
+    .contact-list {
+      list-style: disc;
+      margin-top: 16px;
+      padding-left: 20px;
+    }
+
+    .contact-item {
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+    }
+
+    .contact-item a {
+      color: #ffeb3b;
+      text-decoration: none;
+      border-bottom: 1px dotted #ffeb3b;
+    }
+
+    .contact-item a:hover {
+      border-bottom-style: solid;
+    }
+
+    .game-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #3af5ff;
+      color: #000;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.9rem;
+      border: 2px solid #3af5ff;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(58, 245, 255, 0.4);
+    }
+
+    .game-button:hover {
+      background-color: transparent;
+      color: #3af5ff;
+      box-shadow: 0 0 20px rgba(58, 245, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    footer {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #757575;
+    }
+
+    footer span {
+      color: #ffeb3b;
+    }
+
+    /* Simple top nav to jump between sections */
+    .top-nav {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%) translateZ(0);
+      display: flex;
+      gap: 12px;
+      padding: 6px 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #3af5ff;
+      border-radius: 999px;
+      z-index: 10;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: transform;
+    }
+
+    .top-nav a {
+      border: none;
+      color: #3af5ff;
+      padding: 4px 8px;
+    }
+
+    .top-nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      .frame {
+        padding: 18px;
+      }
+
+      .title {
+        font-size: 1.6rem;
+        letter-spacing: 0.12em;
+      }
+
+      .logos-container {
+        gap: 20px;
+      }
+
+      .logo-item img {
+        max-height: 40px;
+        max-width: 120px;
+      }
+
+      .logos-label {
+        font-size: 0.75rem;
+        margin-bottom: 12px;
+      }
+
+      .logos-container {
+        justify-content: center;
+      }
+
+      .columns-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Simple navigation -->
+  <nav class="top-nav">
+    <a href="#section-1">About</a>
+    <a href="#section-2">Services</a>
+    <a href="#section-3">Contact</a>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <video class="hero-video" autoplay loop muted playsinline>
+      <source src="hero-video.mp4" type="video/mp4">
+      <source src="hero-video.webm" type="video/webm">
+      <!-- Fallback image if video doesn't load -->
+      <img src="hero-image.jpg" alt="Ocean waves" class="hero-image" />
+    </video>
+    <div class="hero-content">
+      <p class="hero-text" id="heroText"></p>
+    </div>
+    <div class="scroll-indicator"></div>
+  </section>
+
+  <!-- SECTION 1 -->
+  <section id="section-1" class="section">
+    <div class="frame">
+      <!-- <header>
+        <h1 class="title">/</h1>
+        <p class="subtitle">/</p> 
+      </header> -->
+
+      <div class="content-box">
+        <h2>Who are we?</h2>
+        <p>
+          We are a teams of hands-on AI and data engineers with over a decade of experience delivering real-time, production-grade
+AI systems. We specialize in building cloud-native ML platforms, real-time data pipelines, and scalable AI systems. We've
+built and deployed platforms for fraud detection, entity resolution, and conversational AI agents at scale. As qualified
+AWS Cloud Architect, we design cloud-native architectures that are resilient, cost-eﬀective, and aligned with business
+goals. With a foundation in finance and strategy, we bridge the gap between business and technical teams—translating
+complex requirements into high-impact, AI-driven solutions that deliver measurable ROI.
+        </p>
+      </div>
+
+      <div class="logos-section">
+        <div class="logos-label">Current and previous clients:</div>
+        <div class="logos-container">
+          <div class="logo-item">
+            <img src="logos/kpmg-logo.png" alt="KPMG" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-placeholder').style.display='block';" />
+            <span class="logo-placeholder">KPMG</span>
+          </div>
+          <div class="logo-item">
+            <img src="logos/moodys-logo.png" alt="Moody's" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-placeholder').style.display='block';" />
+            <span class="logo-placeholder">Moody's</span>
+          </div>
+          <div class="logo-item eu-commission">
+            <img src="logos/eu-commission-logo.png" alt="EU Commission" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-placeholder').style.display='block';" />
+            <span class="logo-placeholder">EU Commission</span>
+          </div>
+          <div class="logo-item">
+            <img src="logos/northington-logo.png" alt="Northington Partners" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-placeholder').style.display='block';" />
+            <span class="logo-placeholder">Northington Partners</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section id="section-2" class="section">
+    <div class="frame">
+      <div class="content-box">
+        <h2>Portfolio and Services</h2>
+        <div class="columns-container">
+          <div class="column">
+            <h3>AI & Machine Learning Development</h3>
+            <p>We design and deploy production-ready AI systems that deliver measurable impact.
+              This includes predictive modelling, fraud detection, compliance analytics, and Graph Neural Networks (GNNs) for link prediction and risk scoring.
+              Every solution is deployed with modern MLOps best practices: drift monitoring, automated retraining, shadow testing, and safe incremental rollouts. area of expertise.</p>
+          </div>
+          <div class="column">
+            <h3>Entity Resolution (Real-Time & Batch)</h3>
+            <p>We build high-accuracy, scalable entity resolution systems tailored to your data.
+              From batch pipelines to real-time streaming architectures, We help organizations move from expensive vendor tools to fully in-house ER platforms—reducing cost, increasing accuracy, and improving automation.
+              Solutions are built using proven technologies such as Kafka, Flink/Spark, Elasticsearch, and Neo4j.</p>
+          </div>
+          <div class="column">
+            <h3>Data Engineering & Large-Scale Pipelines</h3>
+            <p>We develop robust data pipelines capable of processing billions to trillions of data points for analytics, compliance, and operational reporting.
+              Whether you need batch ETL, streaming pipelines, or workflow orchestration, We ensure high throughput, reliability, and observability across your entire data ecosystem.</p>
+          </div>
+          <div class="column">
+            <h3>Cloud Architecture & DevOps Automation</h3>
+            <p>We design scalable cloud platforms and automate everything from infrastructure provisioning to deployment, monitoring, and rollback.
+              Using Kubernetes, AWS, Terraform, and GitHub CI/CD, We create systems that scale efficiently, reduce operational overhead, and improve engineering velocity.
+              This includes full migration of on-prem workflows to cloud with proven cost reductions.</p>
+          </div>
+          <div class="column">
+            <h3>Real-Time Fraud Detection & Compliance Systems</h3>
+            <p>We architect end-to-end fraud analytics systems for financial institutions, government agencies, and enterprises.
+              These solutions combine real-time data ingestion, machine learning, and graph-based analytics to detect anomalies, identify risk, and improve oversight.
+              These systems have been used to protect billions in taxpayer and corporate funds.</p>
+          </div>
+          <div class="column">
+            <h3>AI Platform Integration & Modernization</h3>
+            <p>We help organizations modernize legacy platforms by integrating real-time AI capabilities—entity resolution, intelligent search, chat-based assistants, predictive models, and automated pipelines.
+              The result: faster workflows, better data quality, reduced reliance on third-party tools, and significantly lower operational cost.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section id="section-3" class="section">
+    <div class="frame">
+      <div class="content-box">
+        <h2>Contact Us</h2>
+        <ul class="contact-list">
+          <li class="contact-item">
+            <a href="mailto:info@musai.co.nz">info@musai.co.nz</a>
+          </li>
+          <!-- <li class="contact-item">
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </li> -->
+        </ul>
+      </div>
+
+      <footer>
+        <p>
+          <span>◎</span> MUS AI &mdash; 2025
+        </p>
+      </footer>
+      <div style="text-align: center; margin-top: 24px;">
+        <a href="#section-5" class="game-button">Play</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5 - Galaga Game -->
+  <section id="section-5" class="section">
+    <div class="frame">
+      <div class="content-box">
+        <h2 class="game-title">Galaga</h2>
+        <div class="game-container">
+          <div class="game-info">
+            <div>Score: <span id="score">0</span></div>
+            <div>Lives: <span id="lives">3</span></div>
+            <div>Level: <span id="level">1</span></div>
+          </div>
+          <canvas id="gameCanvas" width="800" height="600"></canvas>
+          <div class="game-controls">
+            <p><strong>Controls:</strong> Arrow Keys to move, Spacebar to shoot</p>
+            <p id="gameStatus">Press SPACE to start</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Check for missing logo images and show placeholders
+    document.addEventListener('DOMContentLoaded', function() {
+      const logoItems = document.querySelectorAll('.logo-item');
+      logoItems.forEach(function(item) {
+        const img = item.querySelector('img');
+        const placeholder = item.querySelector('.logo-placeholder');
+        
+        if (img) {
+          // Check if image failed to load
+          img.addEventListener('error', function() {
+            this.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'block';
+          });
+          
+          // Also check immediately if src is empty or image doesn't exist
+          if (!img.src || img.src.includes('undefined') || img.complete && img.naturalHeight === 0) {
+            img.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'block';
+          }
+        }
+      });
+
+      // Typing animation for hero text
+      const heroText = document.getElementById('heroText');
+      const fullText = 'your trusted AI specialist - partner with MUS AI';
+      let currentIndex = 0;
+
+      function typeText() {
+        if (currentIndex < fullText.length) {
+          heroText.textContent = fullText.substring(0, currentIndex + 1);
+          currentIndex++;
+          setTimeout(typeText, 100); // Adjust speed here (lower = faster)
+        } else {
+          // Add blinking cursor after typing is complete
+          const cursor = document.createElement('span');
+          cursor.className = 'typing-cursor';
+          heroText.appendChild(cursor);
+        }
+      }
+
+      // Start typing animation
+      if (heroText) {
+        typeText();
+      }
+
+      // Initialize Galaga game
+      initGalaga();
+    });
+
+    // Galaga Game Implementation
+    function initGalaga() {
+      const canvas = document.getElementById('gameCanvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      let gameState = 'waiting';
+      let score = 0;
+      let lives = 3;
+      let level = 1;
+      const keys = {};
+
+      const player = {
+        x: canvas.width / 2,
+        y: canvas.height - 50,
+        width: 40,
+        height: 30,
+        speed: 5,
+        color: '#3af5ff'
+      };
+
+      let playerBullets = [];
+      let enemyBullets = [];
+      let enemies = [];
+      const enemyRows = 5;
+      const enemyCols = 10;
+      let enemyDirection = 1;
+      let enemySpeed = 1;
+      const enemyDropSpeed = 20;
+
+      const stars = [];
+      for (let i = 0; i < 100; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          speed: Math.random() * 2 + 0.5
+        });
+      }
+
+      function initEnemies() {
+        enemies = [];
+        const startX = 50;
+        const startY = 50;
+        const spacing = 60;
+
+        for (let row = 0; row < enemyRows; row++) {
+          for (let col = 0; col < enemyCols; col++) {
+            enemies.push({
+              x: startX + col * spacing,
+              y: startY + row * spacing,
+              width: 30,
+              height: 30,
+              color: row === 0 ? '#ff6b6b' : row < 3 ? '#ffeb3b' : '#4ecdc4',
+              alive: true,
+              shootCooldown: Math.random() * 200 + 100
+            });
+          }
+        }
+      }
+
+      initEnemies();
+
+      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keyup', handleKeyUp);
+
+      function handleKeyDown(e) {
+        keys[e.key] = true;
+
+        if (e.key === ' ') {
+          if (gameState === 'waiting') {
+            gameState = 'playing';
+            document.getElementById('gameStatus').textContent = '';
+          } else if (gameState === 'playing') {
+            shoot();
+          } else if (gameState === 'gameover') {
+            restart();
+          }
+        }
+      }
+
+      function handleKeyUp(e) {
+        keys[e.key] = false;
+      }
+
+      function shoot() {
+        playerBullets.push({
+          x: player.x + player.width / 2 - 2,
+          y: player.y,
+          width: 4,
+          height: 10,
+          speed: 8,
+          color: '#ffeb3b'
+        });
+      }
+
+      function update() {
+        if (gameState !== 'playing') return;
+
+        stars.forEach(star => {
+          star.y += star.speed;
+          if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+          }
+        });
+
+        if (keys['ArrowLeft'] && player.x > 0) {
+          player.x -= player.speed;
+        }
+        if (keys['ArrowRight'] && player.x < canvas.width - player.width) {
+          player.x += player.speed;
+        }
+
+        playerBullets = playerBullets.filter(bullet => {
+          bullet.y -= bullet.speed;
+
+          for (const enemy of enemies) {
+            if (enemy.alive &&
+              bullet.x < enemy.x + enemy.width &&
+              bullet.x + bullet.width > enemy.x &&
+              bullet.y < enemy.y + enemy.height &&
+              bullet.y + bullet.height > enemy.y) {
+              enemy.alive = false;
+              score += 100;
+              document.getElementById('score').textContent = score;
+              return false;
+            }
+          }
+
+          return bullet.y > 0;
+        });
+
+        let shouldDrop = false;
+        let maxX = 0;
+        let minX = canvas.width;
+
+        enemies.forEach(enemy => {
+          if (enemy.alive) {
+            maxX = Math.max(maxX, enemy.x + enemy.width);
+            minX = Math.min(minX, enemy.x);
+          }
+        });
+
+        if (maxX >= canvas.width || minX <= 0) {
+          enemyDirection *= -1;
+          shouldDrop = true;
+        }
+
+        enemies.forEach(enemy => {
+          if (enemy.alive) {
+            enemy.x += enemySpeed * enemyDirection;
+            if (shouldDrop) {
+              enemy.y += enemyDropSpeed;
+            }
+
+            enemy.shootCooldown--;
+            if (enemy.shootCooldown <= 0 && Math.random() < 0.01) {
+              enemyBullets.push({
+                x: enemy.x + enemy.width / 2,
+                y: enemy.y + enemy.height,
+                width: 4,
+                height: 10,
+                speed: 3,
+                color: '#ff6b6b'
+              });
+              enemy.shootCooldown = Math.random() * 200 + 100;
+            }
+
+            if (enemy.y + enemy.height >= player.y) {
+              gameOver();
+            }
+          }
+        });
+
+        enemyBullets = enemyBullets.filter(bullet => {
+          bullet.y += bullet.speed;
+
+          if (bullet.x < player.x + player.width &&
+            bullet.x + bullet.width > player.x &&
+            bullet.y < player.y + player.height &&
+            bullet.y + bullet.height > player.y) {
+            lives--;
+            document.getElementById('lives').textContent = lives;
+            if (lives <= 0) {
+              gameOver();
+            }
+            return false;
+          }
+
+          return bullet.y < canvas.height;
+        });
+
+        if (!enemies.some(e => e.alive)) {
+          level++;
+          document.getElementById('level').textContent = level;
+          enemySpeed += 0.5;
+          initEnemies();
+        }
+      }
+
+      function gameOver() {
+        gameState = 'gameover';
+        document.getElementById('gameStatus').textContent = 'Game Over! Press SPACE to restart';
+      }
+
+      function restart() {
+        score = 0;
+        lives = 3;
+        level = 1;
+        enemySpeed = 1;
+        playerBullets = [];
+        enemyBullets = [];
+        player.x = canvas.width / 2;
+        document.getElementById('score').textContent = score;
+        document.getElementById('lives').textContent = lives;
+        document.getElementById('level').textContent = level;
+        initEnemies();
+        gameState = 'waiting';
+        document.getElementById('gameStatus').textContent = 'Press SPACE to start';
+      }
+
+      function draw() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#fff';
+        stars.forEach(star => {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        if (gameState === 'playing' || gameState === 'gameover') {
+          ctx.fillStyle = player.color;
+          ctx.beginPath();
+          ctx.moveTo(player.x + player.width / 2, player.y);
+          ctx.lineTo(player.x, player.y + player.height);
+          ctx.lineTo(player.x + player.width / 4, player.y + player.height * 0.7);
+          ctx.lineTo(player.x + player.width * 3 / 4, player.y + player.height * 0.7);
+          ctx.lineTo(player.x + player.width, player.y + player.height);
+          ctx.closePath();
+          ctx.fill();
+
+          playerBullets.forEach(bullet => {
+            ctx.fillStyle = bullet.color;
+            ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+          });
+
+          enemies.forEach(enemy => {
+            if (enemy.alive) {
+              ctx.fillStyle = enemy.color;
+              ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+              ctx.fillStyle = '#000';
+              ctx.fillRect(enemy.x + 5, enemy.y + 5, enemy.width - 10, enemy.height - 10);
+            }
+          });
+
+          enemyBullets.forEach(bullet => {
+            ctx.fillStyle = bullet.color;
+            ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+          });
+        }
+      }
+
+      function gameLoop() {
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+      }
+
+      gameLoop();
+    }
+  </script>
+
+</body>
+</html>
