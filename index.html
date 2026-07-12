@@ -34,15 +34,19 @@
       -webkit-backface-visibility: hidden;
     }
 
-    .section:nth-of-type(2) {
+    #section-1 {
       background: radial-gradient(circle at center, #050505 0, #000 60%, #000 100%);
     }
 
-    .section:nth-of-type(3) {
+    #section-2 {
       background: radial-gradient(circle at bottom, #141414 0, #000 60%, #000 100%);
     }
 
-    .section:nth-of-type(5) {
+    #section-4 {
+      background: radial-gradient(circle at top, #0a0f14 0, #000 60%, #000 100%);
+    }
+
+    #section-5 {
       background: radial-gradient(circle at center, #0a0a1a 0, #000 60%, #000 100%);
     }
 
@@ -287,6 +291,53 @@
       margin-bottom: 8px;
     }
 
+    /* Cases section */
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .case-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(58, 245, 255, 0.4);
+      border-radius: 8px;
+      padding: 16px;
+      background: rgba(10, 10, 10, 0.6);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .case-card:hover {
+      border-color: #3af5ff;
+      box-shadow: 0 0 14px rgba(58, 245, 255, 0.25);
+    }
+
+    .case-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border: 1px solid rgba(58, 245, 255, 0.25);
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .case-card h3 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #3af5ff;
+      margin-bottom: 10px;
+    }
+
+    .case-card p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e0e0e0;
+    }
+
     /* Logo section */
     .logos-section {
       margin-top: 32px;
@@ -400,25 +451,20 @@
       border-bottom-style: solid;
     }
 
-    /* Contact list with bullet points */
-    .contact-list {
-      list-style: disc;
+    /* Contact line */
+    .contact-line {
       margin-top: 16px;
-      padding-left: 20px;
-    }
-
-    .contact-item {
-      margin-bottom: 16px;
       font-size: 0.95rem;
+      color: #e0e0e0;
     }
 
-    .contact-item a {
+    .contact-line a {
       color: #ffeb3b;
       text-decoration: none;
       border-bottom: 1px dotted #ffeb3b;
     }
 
-    .contact-item a:hover {
+    .contact-line a:hover {
       border-bottom-style: solid;
     }
 
@@ -518,7 +564,8 @@
         justify-content: center;
       }
 
-      .columns-container {
+      .columns-container,
+      .cases-grid {
         grid-template-columns: 1fr;
         gap: 20px;
       }
@@ -532,6 +579,7 @@
   <nav class="top-nav">
     <a href="#section-1">About</a>
     <a href="#section-2">Services</a>
+    <a href="#section-4">Cases</a>
     <a href="#section-3">Contact</a>
   </nav>
 
@@ -585,8 +633,12 @@ complex requirements into high-impact, AI-driven solutions that deliver measurab
             <span class="logo-placeholder">EU Commission</span>
           </div>
           <div class="logo-item">
-            <img src="logos/northington-logo.png" alt="Northington Partners" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-placeholder').style.display='block';" />
-            <span class="logo-placeholder">Northington Partners</span>
+            <img src="logos/assurequality-logo.png" alt="AsureQuality" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-placeholder').style.display='block';" />
+            <span class="logo-placeholder">AsureQuality</span>
+          </div>
+          <div class="logo-item">
+            <img src="logos/gyre-energy-logo.png" alt="Gyre Energy" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-placeholder').style.display='block';" />
+            <span class="logo-placeholder">Gyre Energy</span>
           </div>
         </div>
       </div>
@@ -597,7 +649,7 @@ complex requirements into high-impact, AI-driven solutions that deliver measurab
   <section id="section-2" class="section">
     <div class="frame">
       <div class="content-box">
-        <h2>Portfolio and Services</h2>
+        <h2>Services</h2>
         <div class="columns-container">
           <div class="column">
             <h3>AI & Machine Learning Development</h3>
@@ -638,19 +690,66 @@ complex requirements into high-impact, AI-driven solutions that deliver measurab
     </div>
   </section>
 
+  <!-- SECTION 4 - Cases -->
+  <section id="section-4" class="section">
+    <div class="frame">
+      <div class="content-box">
+        <h2>Cases</h2>
+        <div class="cases-grid">
+          <div class="case-card">
+            <img class="case-image" src="cases/assurequality.jpg" alt="AsureQuality case study" loading="lazy" />
+            <h3>AsureQuality</h3>
+            <p>
+              Built a computer vision system that inspects meat carcasses on the processing line, flagging
+              defects in real time so operators can trim and process each product accurately. Precise defect
+              detection is critical for export compliance—missed or mislabelled defects cause shipments to be
+              turned away at the importing country's border. The system supports faster throughput while
+              reducing rejection risk and quality-related losses.
+            </p>
+          </div>
+          <div class="case-card">
+            <img class="case-image" src="cases/kpmg.jpg" alt="KPMG case study" loading="lazy" />
+            <h3>KPMG</h3>
+            <p>
+              Designing and deploying AI agents that automate repetitive internal workflows—from document
+              handling and data lookups to routine reporting. The agents integrate directly with existing
+              systems, freeing consultants and analysts to focus on higher-value client work and materially
+              shortening turnaround on operational tasks.
+            </p>
+          </div>
+          <div class="case-card">
+            <img class="case-image" src="cases/gyre-energy.jpg" alt="Gyre Energy case study" loading="lazy" />
+            <h3>Gyre Energy</h3>
+            <p>
+              Advised on the end-to-end system architecture for moving telemetry from Gyre's connected fridge
+              units out to the edge. The recommended design optimises for bandwidth, latency, and operating
+              cost—enabling reliable real-time monitoring across a distributed hardware estate without
+              over-provisioning cloud infrastructure.
+            </p>
+          </div>
+          <div class="case-card">
+            <img class="case-image" src="cases/eu-commission.jpg" alt="EU Commission case study" loading="lazy" />
+            <h3>EU Commission</h3>
+            <p>
+              Designed and owned the entity resolution algorithm that matches sanctioned individuals and
+              organisations against applicants for European Commission grant funding. The system underpinned
+              oversight of approximately €2 trillion in monitored grant allocations, giving investigators a
+              scalable, accurate way to detect risk exposure at the point of application.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- SECTION 3 -->
   <section id="section-3" class="section">
     <div class="frame">
       <div class="content-box">
         <h2>Contact Us</h2>
-        <ul class="contact-list">
-          <li class="contact-item">
-            <a href="mailto:info@musai.co.nz">info@musai.co.nz</a>
-          </li>
-          <!-- <li class="contact-item">
-            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          </li> -->
-        </ul>
+        <p class="contact-line">
+          <a href="mailto:info@musai.co.nz">info@musai.co.nz</a> | Warkworth, NZ
+        </p>
       </div>
 
       <footer>
@@ -658,13 +757,16 @@ complex requirements into high-impact, AI-driven solutions that deliver measurab
           <span>◎</span> MUS AI &mdash; 2025
         </p>
       </footer>
+      <!-- Galaga Play button hidden — re-enable by removing these comment markers
       <div style="text-align: center; margin-top: 24px;">
         <a href="#section-5" class="game-button">Play</a>
       </div>
+      -->
     </div>
   </section>
 
-  <!-- SECTION 5 - Galaga Game -->
+  <!-- SECTION 5 - Galaga Game (hidden — re-enable by removing the comment wrapper below) -->
+  <!--
   <section id="section-5" class="section">
     <div class="frame">
       <div class="content-box">
@@ -684,6 +786,8 @@ complex requirements into high-impact, AI-driven solutions that deliver measurab
       </div>
     </div>
   </section>
+  -->
+
 
   <script>
     // Check for missing logo images and show placeholders
@@ -730,6 +834,18 @@ complex requirements into high-impact, AI-driven solutions that deliver measurab
       if (heroText) {
         typeText();
       }
+
+      // Smooth scroll for in-page anchor links (works inside preview iframes too)
+      document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          const targetId = link.getAttribute('href').slice(1);
+          if (!targetId) return;
+          const target = document.getElementById(targetId);
+          if (!target) return;
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
 
       // Initialize Galaga game
       initGalaga();
