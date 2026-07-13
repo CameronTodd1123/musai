@@ -147,6 +147,21 @@
       font-family: 'Courier New', monospace;
     }
 
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1em;
+      background-color: #fff;
+      margin-left: 4px;
+      animation: blink 1s infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
     /* Scroll indicator */
     .scroll-indicator {
       position: absolute;
@@ -568,7 +583,7 @@
   <section class="hero-section">
     <img class="hero-image" src="home/home-image.jpg" alt="" />
     <div class="hero-content">
-      <p class="hero-text">The inspiration of nine Muses.<br>The power of AI. Meet Musai.</p>
+      <p class="hero-text">The inspiration of the nine Muses.<br>The power of AI.<br><span id="heroTyped"></span></p>
     </div>
     <div class="scroll-indicator"></div>
   </section>
@@ -762,6 +777,25 @@ complex requirements into high-impact, AI-driven solutions that deliver measurab
           }
         }
       });
+
+      // Typewriter for the final hero line
+      const typedTarget = document.getElementById('heroTyped');
+      if (typedTarget) {
+        const typedText = 'Meet Musai.';
+        let typedIndex = 0;
+        function typeStep() {
+          if (typedIndex < typedText.length) {
+            typedTarget.textContent = typedText.substring(0, typedIndex + 1);
+            typedIndex++;
+            setTimeout(typeStep, 90);
+          } else {
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            typedTarget.appendChild(cursor);
+          }
+        }
+        typeStep();
+      }
 
       // Smooth scroll for in-page anchor links (works inside preview iframes too)
       document.querySelectorAll('a[href^="#"]').forEach(function(link) {
